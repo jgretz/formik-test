@@ -48,7 +48,7 @@ const Errors = ({errors}) => {
   return <Text styles={styles.errors}>{errors.email}</Text>;
 };
 
-const Login = ({errors, values, handleChange, handleBlur, handleSubmit}) => (
+const Form = ({errors, values, handleChange, handleBlur, handleSubmit}) => (
   <View style={styles.view}>
     <TextInput
       style={styles.input}
@@ -67,6 +67,6 @@ export default () => (
     validationSchema={LoginSchema}
     onSubmit={onSubmit}
   >
-    {Login}
+    {Form}
   </Formik>
 );
