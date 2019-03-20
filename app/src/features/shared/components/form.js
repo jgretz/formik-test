@@ -1,8 +1,11 @@
 import React from 'react';
-import {Button, Text, TextInput, View} from 'react-native';
+import {pipe, withHandlers, withState} from '@synvox/rehook';
+import {Button, Text, View} from 'react-native';
+import {Input} from './controls';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
+// styles
 const styles = {
   view: {
     flex: 1,
@@ -13,6 +16,7 @@ const styles = {
   input: {
     height: 50,
     width: 200,
+    marginBottom: 10,
 
     borderColor: '#000',
     borderWidth: 1,
@@ -28,45 +32,106 @@ const styles = {
   },
 };
 
-const INITIAL = {email: 'test@test.com'};
+// Schema
+const SCHEMA = {
+  email: 'email',
+  password: 'password',
+};
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
+    .email('Invalid Email')
+    .required('Email Required'),
+
+  password: Yup.string().required('Password Required'),
 });
 
-const onSubmit = values => {
-  alert(`Hey, you can type an email!!!!\n\n${values.email}`);
+// render
+const Errors = ({errors, touched}) => {
+  const errorText = [
+    {
+      touched: touched?.email,
+      text: errors.email,
+    },
+    {
+      touched: touched?.password,
+      text: errors.password,
+    },
+  ]
+    .filter(x => x.touched && x.text)
+    .map(x => x.text)
+    .join('\n');
+
+  return <Text styles={styles.errors}>{errorText}</Text>;
 };
 
-const Errors = ({errors}) => {
-  if (!errors) {
-    return <Text />;
-  }
-
-  return <Text styles={styles.errors}>{errors.email}</Text>;
-};
-
-const Form = ({errors, values, handleChange, handleBlur, handleSubmit}) => (
+const Fields = ({focused, handleFocus, setNextFocus}) => ({
+  errors,
+  touched,
+  values,
+  handleChange,
+  handleBlur,
+  handleSubmit,
+}) => (
   <View style={styles.view}>
-    <TextInput
+    <Input
       style={styles.input}
-      onChangeText={handleChange('email')}
-      onBlur={handleBlur('email')}
+      autoCapitalize="none"
+      textContentType="emailAddress"
       value={values.email}
+      returnKeyLabel="Next"
+      returnKeyType="next"
+      onChangeText={handleChange(SCHEMA.email)}
+      onBlur={handleBlur(SCHEMA.email)}
+      onFocus={handleFocus}
+      onEndEditing={setNextFocus(SCHEMA.password)}
+      focus={focused === SCHEMA.email}
+      autoFocus
     />
-    <Button onPress={handleSubmit} title="Submit" />
-    <Errors errors={errors} />
+    <Input
+      style={styles.input}
+      textContentType="password"
+      value={values.password}
+      secureTextEntry
+      returnKeyLabel="Submit"
+      returnKeyType="done"
+      onChangeText={handleChange(SCHEMA.password)}
+      onBlur={handleBlur(SCHEMA.password)}
+      onFocus={handleFocus}
+      onEndEditing={handleSubmit}
+      focus={focused === SCHEMA.password}
+    />
+    <Button onPress={handleSubmit} title="Login" />
+    <Errors errors={errors} touched={touched} />
   </View>
 );
 
-export default () => (
-  <Formik
-    initialValues={INITIAL}
-    validationSchema={LoginSchema}
-    onSubmit={onSubmit}
-  >
-    {Form}
+const Form = ({handlSubmit, ...props}) => (
+  <Formik validationSchema={LoginSchema} onSubmit={handlSubmit}>
+    {Fields(props)}
   </Formik>
 );
+
+// compose
+const ComposedForm = pipe(
+  withState('focused', 'setFocus', SCHEMA.email),
+
+  withHandlers({
+    handlSubmit: () => values => {
+      alert(`Hey, you can type an email!!!!\n\n${values.email}`);
+    },
+
+    handleFocus: ({setFocus}) => () => {
+      setFocus(null);
+    },
+
+    setNextFocus: ({setFocus}) => nextFocus => () => {
+      setFocus(nextFocus);
+    },
+  }),
+
+  Form,
+);
+
+// export
+export default ComposedForm;
