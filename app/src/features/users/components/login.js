@@ -8,38 +8,7 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 
 import {login} from '../actions';
-
-// styles
-const styles = {
-  view: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  input: {
-    height: 50,
-    width: 200,
-    marginBottom: 10,
-
-    borderColor: '#000',
-    borderWidth: 1,
-    borderRadius: 8,
-
-    padding: 5,
-  },
-  labelContainer: {
-    width: 200,
-    alignItems: 'flex-start',
-  },
-  label: {},
-  errors: {
-    height: 50,
-    width: 200,
-
-    color: '#ff0000',
-  },
-};
+import {withStyles} from '../../shared/services';
 
 // Schema
 const SCHEMA = {
@@ -56,7 +25,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 // render
-const Errors = ({errors, touched}) => {
+const Errors = ({errors, touched, styles}) => {
   const errorText = [
     {
       touched: touched?.email,
@@ -74,13 +43,13 @@ const Errors = ({errors, touched}) => {
   return <Text styles={styles.errors}>{errorText}</Text>;
 };
 
-const Fields = ({focused, handleFocus, setNextFocus}) => ({
-  errors,
-  touched,
+const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   values,
   handleChange,
   handleBlur,
   handleSubmit,
+
+  ...props
 }) => (
   <View style={styles.view}>
     <View style={styles.labelContainer}>
@@ -117,12 +86,12 @@ const Fields = ({focused, handleFocus, setNextFocus}) => ({
       focus={focused === SCHEMA.password}
     />
     <Button onPress={handleSubmit} title="Login" />
-    <Errors errors={errors} touched={touched} />
+    <Errors styles={styles} {...props} />
   </View>
 );
 
-const Login = ({handlSubmit, ...props}) => (
-  <Formik validationSchema={LoginSchema} onSubmit={handlSubmit}>
+const Login = ({handleSubmit, ...props}) => (
+  <Formik validationSchema={LoginSchema} onSubmit={handleSubmit}>
     {Fields(props)}
   </Formik>
 );
@@ -132,7 +101,7 @@ const ComposedLogin = pipe(
   withState('focused', 'setFocus', SCHEMA.email),
 
   withHandlers({
-    handlSubmit: ({login}) => values => {
+    handleSubmit: ({login}) => values => {
       login(values.email, values.password);
     },
 
@@ -152,4 +121,4 @@ const ComposedLogin = pipe(
 export default connect(
   null,
   {login},
-)(ComposedLogin);
+)(withStyles()(ComposedLogin));

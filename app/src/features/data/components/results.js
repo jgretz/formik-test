@@ -6,21 +6,13 @@ import {Button, Text, View} from 'react-native';
 
 import {reset} from '../actions';
 import {dataSelector} from '../selectors';
-
-// styles
-const styles = {
-  view: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-};
+import {withStyles} from '../../shared/services';
 
 // render
 const Results = ({
   data: {email, firstName, lastName, favMovie, favFood},
   reset,
+  styles,
 }) => (
   <View style={styles.view}>
     <Text>Email: {email}</Text>
@@ -51,4 +43,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {reset},
-)(ComposeResults);
+)(withStyles()(ComposeResults));
