@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
 import {combineReducers} from 'redux';
-import temp from './temp.js';
+import user from './user.js';
 
 export default combineReducers({
-  temp,
+  user,
 });

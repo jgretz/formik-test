@@ -1,9 +1,13 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import {pipe, withHandlers, withState} from '@synvox/rehook';
+
 import {Button, Text, View} from 'react-native';
-import {Input} from './controls';
+import {Input} from '../../shared/components';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+
+import {login} from '../actions';
 
 // styles
 const styles = {
@@ -106,19 +110,19 @@ const Fields = ({focused, handleFocus, setNextFocus}) => ({
   </View>
 );
 
-const Form = ({handlSubmit, ...props}) => (
+const Login = ({handlSubmit, ...props}) => (
   <Formik validationSchema={LoginSchema} onSubmit={handlSubmit}>
     {Fields(props)}
   </Formik>
 );
 
 // compose
-const ComposedForm = pipe(
+const ComposedLogin = pipe(
   withState('focused', 'setFocus', SCHEMA.email),
 
   withHandlers({
-    handlSubmit: () => values => {
-      alert(`Hey, you can type an email!!!!\n\n${values.email}`);
+    handlSubmit: ({login}) => values => {
+      login(values.email, values.password);
     },
 
     handleFocus: ({setFocus}) => () => {
@@ -130,8 +134,11 @@ const ComposedForm = pipe(
     },
   }),
 
-  Form,
+  Login,
 );
 
 // export
-export default ComposedForm;
+export default connect(
+  null,
+  {login},
+)(ComposedLogin);

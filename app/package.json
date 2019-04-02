@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start-clean": "react-native start --reset-cache",
     "test": "jest",
     "generateIndexFiles": "npm-run-all --parallel generateActionIndexFiles generateComponentIndexFiles generateServiceIndexFiles generateSelectorIndexFiles generateUtilIndexFiles generateReducerIndexFiles",
     "generateActionIndexFiles": "babel-node tools/generateActionIndexFiles.js",
@@ -35,8 +36,9 @@
     "redux-promise-middleware": "^6.1.0",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "truefit-http-utils": "^1.0.2",
     "truefit-navigation": "3.2.2",
-    "truefit-react-utils": "^0.0.15",
+    "truefit-redux-utils": "^1.0.1",
     "yup": "^0.27.0"
   },
   "devDependencies": {
@@ -49,6 +51,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.2.0",
     "@babel/plugin-proposal-pipeline-operator": "^7.3.2",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-flow-strip-types": "^7.4.0",
     "@babel/runtime": "^7.4.2",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.5.0",
