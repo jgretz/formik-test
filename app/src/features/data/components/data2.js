@@ -101,7 +101,6 @@ const Fields = ({focused, handleFocus, setNextFocus}) => ({
     <Input
       style={styles.input}
       value={values.favFood}
-      secureTextEntry
       returnKeyLabel="Submit"
       returnKeyType="done"
       onChangeText={handleChange(SCHEMA.favFood)}

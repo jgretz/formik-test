@@ -5,6 +5,7 @@ import {pipe, withHandlers} from '@synvox/rehook';
 import {Button, Text, View} from 'react-native';
 
 import {reset} from '../actions';
+import {dataSelector} from '../selectors';
 
 // styles
 const styles = {
@@ -17,8 +18,16 @@ const styles = {
 };
 
 // render
-const Results = ({reset}) => (
+const Results = ({
+  data: {email, firstName, lastName, favMovie, favFood},
+  reset,
+}) => (
   <View style={styles.view}>
+    <Text>Email: {email}</Text>
+    <Text>First Name: {firstName}</Text>
+    <Text>Last Name: {lastName}</Text>
+    <Text>Favorite Movie: {favMovie}</Text>
+    <Text>Favorite Food: {favFood}</Text>
     <Button onPress={reset} title="Complete" />
   </View>
 );
@@ -35,7 +44,11 @@ const ComposeResults = pipe(
 );
 
 // export
+const mapStateToProps = state => ({
+  data: dataSelector(state),
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   {reset},
 )(ComposeResults);
