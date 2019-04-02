@@ -7,7 +7,7 @@ import {Input} from '../../shared/components';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
-import {login} from '../actions';
+import {goToResults} from '../actions';
 
 // styles
 const styles = {
@@ -43,28 +43,25 @@ const styles = {
 
 // Schema
 const SCHEMA = {
-  email: 'email',
-  password: 'password',
+  favMoview: 'favMovie',
+  favFood: 'favFood',
 };
 
-const LoginSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Invalid Email')
-    .required('Email Required'),
-
-  password: Yup.string().required('Password Required'),
+const Data2Schema = Yup.object().shape({
+  favMovie: Yup.string().required('Favorite Movie Required'),
+  favFood: Yup.string().required('Favorite Food Required'),
 });
 
 // render
 const Errors = ({errors, touched}) => {
   const errorText = [
     {
-      touched: touched?.email,
-      text: errors.email,
+      touched: touched?.favMovie,
+      text: errors.favMovie,
     },
     {
-      touched: touched?.password,
-      text: errors.password,
+      touched: touched?.favFood,
+      text: errors.favFood,
     },
   ]
     .filter(x => x.touched && x.text)
@@ -84,56 +81,53 @@ const Fields = ({focused, handleFocus, setNextFocus}) => ({
 }) => (
   <View style={styles.view}>
     <View style={styles.labelContainer}>
-      <Text style={styles.label}>Email</Text>
+      <Text style={styles.label}>Favorite Movie</Text>
     </View>
     <Input
       style={styles.input}
-      autoCapitalize="none"
-      textContentType="emailAddress"
-      value={values.email}
+      value={values.favMovie}
       returnKeyLabel="Next"
       returnKeyType="next"
-      onChangeText={handleChange(SCHEMA.email)}
-      onBlur={handleBlur(SCHEMA.email)}
+      onChangeText={handleChange(SCHEMA.favMoview)}
+      onBlur={handleBlur(SCHEMA.favMoview)}
       onFocus={handleFocus}
-      onEndEditing={setNextFocus(SCHEMA.password)}
-      focus={focused === SCHEMA.email}
+      onEndEditing={setNextFocus(SCHEMA.favFood)}
+      focus={focused === SCHEMA.favMoview}
       autoFocus
     />
     <View style={styles.labelContainer}>
-      <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>Favorite Food</Text>
     </View>
     <Input
       style={styles.input}
-      textContentType="password"
-      value={values.password}
+      value={values.favFood}
       secureTextEntry
       returnKeyLabel="Submit"
       returnKeyType="done"
-      onChangeText={handleChange(SCHEMA.password)}
-      onBlur={handleBlur(SCHEMA.password)}
+      onChangeText={handleChange(SCHEMA.favFood)}
+      onBlur={handleBlur(SCHEMA.favFood)}
       onFocus={handleFocus}
       onEndEditing={handleSubmit}
-      focus={focused === SCHEMA.password}
+      focus={focused === SCHEMA.favFood}
     />
-    <Button onPress={handleSubmit} title="Login" />
+    <Button onPress={handleSubmit} title="Complete" />
     <Errors errors={errors} touched={touched} />
   </View>
 );
 
-const Login = ({handlSubmit, ...props}) => (
-  <Formik validationSchema={LoginSchema} onSubmit={handlSubmit}>
+const Data2 = ({handlSubmit, ...props}) => (
+  <Formik validationSchema={Data2Schema} onSubmit={handlSubmit}>
     {Fields(props)}
   </Formik>
 );
 
 // compose
-const ComposedLogin = pipe(
-  withState('focused', 'setFocus', SCHEMA.email),
+const ComposedData1 = pipe(
+  withState('focused', 'setFocus', SCHEMA.favMoview),
 
   withHandlers({
-    handlSubmit: ({login}) => values => {
-      login(values.email, values.password);
+    handlSubmit: ({goToResults}) => values => {
+      goToResults(values);
     },
 
     handleFocus: ({setFocus}) => () => {
@@ -145,11 +139,11 @@ const ComposedLogin = pipe(
     },
   }),
 
-  Login,
+  Data2,
 );
 
 // export
 export default connect(
   null,
-  {login},
-)(ComposedLogin);
+  {goToResults},
+)(ComposedData1);
