@@ -19,13 +19,13 @@ export const styles = {
   },
   labelContainer: {
     width: 200,
+
+    flexDirection: 'row',
     alignItems: 'flex-start',
   },
   label: {},
-  errors: {
-    height: 50,
-    width: 200,
-
+  error: {
+    marginLeft: 10,
     color: '#ff0000',
   },
 };

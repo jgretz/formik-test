@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {pipe, withHandlers, withState} from '@synvox/rehook';
 
 import {Button, Text, View} from 'react-native';
-import {Input} from '../../shared/components';
+import {Input, ErrorMessage} from '../../shared/components';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
@@ -12,7 +12,7 @@ import {withStyles} from '../../shared/services';
 
 // Schema
 const SCHEMA = {
-  favMoview: 'favMovie',
+  favMovie: 'favMovie',
   favFood: 'favFood',
 };
 
@@ -22,24 +22,6 @@ const Data2Schema = Yup.object().shape({
 });
 
 // render
-const Errors = ({errors, touched, styles}) => {
-  const errorText = [
-    {
-      touched: touched?.favMovie,
-      text: errors.favMovie,
-    },
-    {
-      touched: touched?.favFood,
-      text: errors.favFood,
-    },
-  ]
-    .filter(x => x.touched && x.text)
-    .map(x => x.text)
-    .join('\n');
-
-  return <Text styles={styles.errors}>{errorText}</Text>;
-};
-
 const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   values,
   handleChange,
@@ -51,21 +33,23 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   <View style={styles.view}>
     <View style={styles.labelContainer}>
       <Text style={styles.label}>Favorite Movie</Text>
+      <ErrorMessage name={SCHEMA.favMovie} styles={styles} {...props} />
     </View>
     <Input
       style={styles.input}
       value={values.favMovie}
       returnKeyLabel="Next"
       returnKeyType="next"
-      onChangeText={handleChange(SCHEMA.favMoview)}
-      onBlur={handleBlur(SCHEMA.favMoview)}
+      onChangeText={handleChange(SCHEMA.favMovie)}
+      onBlur={handleBlur(SCHEMA.favMovie)}
       onFocus={handleFocus}
       onEndEditing={setNextFocus(SCHEMA.favFood)}
-      focus={focused === SCHEMA.favMoview}
+      focus={focused === SCHEMA.favMovie}
       autoFocus
     />
     <View style={styles.labelContainer}>
       <Text style={styles.label}>Favorite Food</Text>
+      <ErrorMessage name={SCHEMA.favFood} styles={styles} {...props} />
     </View>
     <Input
       style={styles.input}
@@ -79,7 +63,6 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
       focus={focused === SCHEMA.favFood}
     />
     <Button onPress={handleSubmit} title="Complete" />
-    <Errors styles={styles} {...props} />
   </View>
 );
 
@@ -91,7 +74,7 @@ const Data2 = ({handlSubmit, ...props}) => (
 
 // compose
 const ComposedData2 = pipe(
-  withState('focused', 'setFocus', SCHEMA.favMoview),
+  withState('focused', 'setFocus', SCHEMA.favMovie),
 
   withHandlers({
     handlSubmit: ({goToResults}) => values => {

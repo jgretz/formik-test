@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {pipe, withHandlers, withState} from '@synvox/rehook';
 
 import {Button, Text, View} from 'react-native';
-import {Input} from '../../shared/components';
+import {Input, ErrorMessage} from '../../shared/components';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
@@ -22,24 +22,6 @@ const Data1Schema = Yup.object().shape({
 });
 
 // render
-const Errors = ({errors, touched, styles}) => {
-  const errorText = [
-    {
-      touched: touched?.firstName,
-      text: errors.firstName,
-    },
-    {
-      touched: touched?.lastName,
-      text: errors.lastName,
-    },
-  ]
-    .filter(x => x.touched && x.text)
-    .map(x => x.text)
-    .join('\n');
-
-  return <Text styles={styles.errors}>{errorText}</Text>;
-};
-
 const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   values,
   handleChange,
@@ -51,6 +33,7 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   <View style={styles.view}>
     <View style={styles.labelContainer}>
       <Text style={styles.label}>First Name</Text>
+      <ErrorMessage name={SCHEMA.firstName} styles={styles} {...props} />
     </View>
     <Input
       style={styles.input}
@@ -66,6 +49,7 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
     />
     <View style={styles.labelContainer}>
       <Text style={styles.label}>Last Name</Text>
+      <ErrorMessage name={SCHEMA.lastName} styles={styles} {...props} />
     </View>
     <Input
       style={styles.input}
@@ -79,7 +63,6 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
       focus={focused === SCHEMA.lastName}
     />
     <Button onPress={handleSubmit} title="Next" />
-    <Errors styles={styles} {...props} />
   </View>
 );
 

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {pipe, withHandlers, withState} from '@synvox/rehook';
 
 import {Button, Text, View} from 'react-native';
-import {Input} from '../../shared/components';
+import {Input, ErrorMessage} from '../../shared/components';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
@@ -25,24 +25,6 @@ const LoginSchema = Yup.object().shape({
 });
 
 // render
-const Errors = ({errors, touched, styles}) => {
-  const errorText = [
-    {
-      touched: touched?.email,
-      text: errors.email,
-    },
-    {
-      touched: touched?.password,
-      text: errors.password,
-    },
-  ]
-    .filter(x => x.touched && x.text)
-    .map(x => x.text)
-    .join('\n');
-
-  return <Text styles={styles.errors}>{errorText}</Text>;
-};
-
 const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   values,
   handleChange,
@@ -54,6 +36,7 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
   <View style={styles.view}>
     <View style={styles.labelContainer}>
       <Text style={styles.label}>Email</Text>
+      <ErrorMessage name={SCHEMA.email} styles={styles} {...props} />
     </View>
     <Input
       style={styles.input}
@@ -71,6 +54,7 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
     />
     <View style={styles.labelContainer}>
       <Text style={styles.label}>Password</Text>
+      <ErrorMessage name={SCHEMA.password} styles={styles} {...props} />
     </View>
     <Input
       style={styles.input}
@@ -85,8 +69,8 @@ const Fields = ({focused, handleFocus, setNextFocus, styles}) => ({
       onEndEditing={handleSubmit}
       focus={focused === SCHEMA.password}
     />
+
     <Button onPress={handleSubmit} title="Login" />
-    <Errors styles={styles} {...props} />
   </View>
 );
 
