@@ -23,7 +23,7 @@
     "formik": "^1.5.1",
     "immer": "^2.1.4",
     "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
     "pluralize": "^7.0.0",
